@@ -375,12 +375,14 @@
                     return;
                 }
 
-                tbody.innerHTML = data.records.map(r => 
+                tbody.innerHTML = data.records
+                    .filter(r => r && r.id)
+                    .map(r => 
                     '<tr>' +
                         '<td><code>' + r.id + '</code></td>' +
-                        '<td><strong>' + r.name + '</strong> <span style="color:var(--text-muted);">(' + r.attendeeId + ')</span></td>' +
+                        '<td><strong>' + (r.name || 'Attendee') + '</strong> <span style="color:var(--text-muted);">(' + (r.attendeeId || r.id) + ')</span></td>' +
                         '<td><span class="pill ' + (r.status === 'CHECKED_IN' ? 'pill-checked' : 'pill-pending') + '">' + (r.status === 'CHECKED_IN' ? '✅ CHECKED_IN' : '⏳ PENDING_PRINT') + '</span></td>' +
-                        '<td>' + new Date(r.requestedAt).toLocaleTimeString() + '</td>' +
+                        '<td>' + (r.requestedAt ? new Date(r.requestedAt).toLocaleTimeString() : '-') + '</td>' +
                         '<td>' + (r.printedAt ? new Date(r.printedAt).toLocaleTimeString() : '<span style="color:var(--accent-yellow);">Queued</span>') + '</td>' +
                     '</tr>'
                 ).join('');
