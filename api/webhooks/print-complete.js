@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function: Badge Print Completion Webhook Endpoint
- * Route: POST /api/webhooks/print-complete
+ * Route: POST /api/webhooks/print-complete and POST /api/print-complete
  */
 
 const store = require('../../lib/store');
@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
   if (req.method && req.method.toUpperCase() !== 'POST') {
     return sendJsonResponse(405, {
       error: "Method Not Allowed",
-      message: "Use POST /api/webhooks/print-complete"
+      message: "Use POST /api/print-complete"
     });
   }
 
@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
   }
 
   const printedAt = new Date().toISOString();
-  const updatedRecord = await store.updateRecordStatus(checkInId, "CHECKED_IN", printedAt);
+  const updatedRecord = store.updateRecordStatus(checkInId, "CHECKED_IN", printedAt);
 
   if (!updatedRecord) {
     return sendJsonResponse(404, {

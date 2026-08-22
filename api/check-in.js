@@ -60,7 +60,7 @@ module.exports = async function handler(req, res) {
     printedAt: null
   };
 
-  const { isNew, record } = await store.setIfNotExists(attendee.id, newRecord);
+  const { isNew, record } = store.setIfNotExists(attendee.id, newRecord);
 
   if (!isNew) {
     return sendJsonResponse(200, {
@@ -70,23 +70,23 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // Trigger print completion webhook simulation
-  const host = req.headers && req.headers.host ? req.headers.host : 'solstice-events-co-checkin-kiosk-as.vercel.app';
-  const protocol = req.headers && req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'https';
-  const webhookUrl = protocol + "://" + host + "/api/webhooks/print-complete";
-
-  fetch(webhookUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ checkInId: newRecord.id })
-  }).catch(err => {
-    console.error("Async webhook simulation fetch error:", err.message);
-    store.updateRecordStatus(newRecord.id, 'CHECKED_IN', new Date().toISOString());
-  });
+  // Simulated Async Webhook Call & State Update
+  setTimeout(async () => {
+    try {
+      const host = process.env.VERCEL_URL || (req.headers && req.headers.host) || 'localhost:3001';
+      const protocol = host.includes('localhost') ? 'http' : 'https';
+      await fetch(protocol + "://" + host + "/api/webhooks/print-complete", {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ checkInId: record.id })
+      });
+    } catch (err) {}
+    store.updateRecordStatus(record.id, 'CHECKED_IN', new Date().toISOString());
+  }, 2000);
 
   return sendJsonResponse(202, {
     status: "PENDING_PRINT",
-    checkInId: newRecord.id,
+    checkInId: record.id,
     attendeeId: attendee.id,
     name: attendee.name,
     message: "Check-in accepted. Badge print queued asynchronously.",

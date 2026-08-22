@@ -1,6 +1,6 @@
 /**
  * Vercel Serverless Function: Check-In Status Polling Endpoint
- * Route: GET /api/status?id=CHK-... or GET /api/status/ATT-001 or GET /api/status?attendeeId=ATT-001
+ * Route: GET /api/status?id=CHK-... or GET /api/status/ATT-001
  */
 
 const store = require('../lib/store');

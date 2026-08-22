@@ -8,8 +8,5 @@
     "dev": "node dev.js",
     "start": "node dev.js"
   },
-  "license": "ISC",
-  "dependencies": {
-    "@upstash/redis": "^1.34.3"
-  }
+  "license": "ISC"
 }
