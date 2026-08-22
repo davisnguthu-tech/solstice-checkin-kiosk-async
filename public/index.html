@@ -8,6 +8,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- HTML5 QR Code Scanner Library -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
     <style>
         /* CSS Theme Definitions */
         :root[data-theme="vibrant"] {
@@ -395,6 +397,67 @@
                 </div>
             </section>
 
+            <!-- Live QR Code / Barcode Scanner Section -->
+            <section class="card">
+                <div class="card-title">
+                    <span>📷 Kiosk Live QR Code Scanner</span>
+                    <span style="font-size: 0.8rem; color: var(--secondary-accent-light); font-weight: 600;">HTML5 Camera Vision</span>
+                </div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.1rem;">
+                    Position a delegate badge QR code in front of the kiosk camera to automatically check in and trigger physical badge printing:
+                </p>
+
+                <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-bottom: 1rem;">
+                    <button class="btn-checkin" id="btn-start-scanner" style="width: auto; padding: 0.65rem 1.25rem;" onclick="startCameraScanner()">📸 Start Camera Scanner</button>
+                    <button class="btn-checkin" id="btn-stop-scanner" style="width: auto; padding: 0.65rem 1.25rem; background: #64748b; display: none;" onclick="stopCameraScanner()">⏹️ Stop Camera</button>
+                    <label class="btn-checkin" style="width: auto; padding: 0.65rem 1.25rem; background: var(--secondary-accent); cursor: pointer;">
+                        📁 Scan QR Image File
+                        <input type="file" id="qr-file-input" accept="image/*" style="display: none;" onchange="scanImageFile(this)">
+                    </label>
+                </div>
+
+                <!-- Scanner Viewfinder Box -->
+                <div id="qr-reader" style="width: 100%; border-radius: 12px; overflow: hidden; background: rgba(0,0,0,0.4); display: none; border: 1.5px solid var(--border-color); margin-bottom: 1rem;"></div>
+
+                <!-- Sample QR Badges Carousel/Grid for Easy Testing -->
+                <div style="margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                    <div style="font-size: 0.85rem; font-weight: 700; color: var(--text-main); margin-bottom: 0.75rem;">
+                        📱 Sample Test Delegate Badges (Scan with Phone Camera or Click to Test):
+                    </div>
+                    <div style="display: flex; gap: 1rem; overflow-x: auto; padding-bottom: 0.5rem;">
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-101')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-101" alt="QR ATT-101" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">CS Margaret</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-101</div>
+                        </div>
+
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-102')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-102" alt="QR ATT-102" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Dr. Kiprono</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-102</div>
+                        </div>
+
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-103')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-103" alt="QR ATT-103" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Aisha Omondi</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-103</div>
+                        </div>
+
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-104')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-104" alt="QR ATT-104" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Olumide A.</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-104</div>
+                        </div>
+
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-105')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-105" alt="QR ATT-105" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Sarah Jenkins</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-105</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             <!-- Kiosk Attendee Check-In Panel -->
             <section class="card">
                 <div class="card-title">🏷️ Kiosk Delegate Check-In Panel</div>
@@ -509,6 +572,7 @@
 
     <script>
         let pollTimer = null;
+        let html5QrCode = null;
 
         function setTheme(themeName) {
             document.documentElement.setAttribute('data-theme', themeName);
@@ -520,6 +584,67 @@
 
         const savedTheme = localStorage.getItem('solstice_theme');
         if (savedTheme) setTheme(savedTheme);
+
+        async function startCameraScanner() {
+            const qrReaderDiv = document.getElementById('qr-reader');
+            const btnStart = document.getElementById('btn-start-scanner');
+            const btnStop = document.getElementById('btn-stop-scanner');
+
+            qrReaderDiv.style.display = 'block';
+            btnStart.style.display = 'none';
+            btnStop.style.display = 'inline-block';
+
+            if (!html5QrCode) {
+                html5QrCode = new Html5Qrcode("qr-reader");
+            }
+
+            try {
+                await html5QrCode.start(
+                    { facingMode: "environment" },
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    (decodedText, decodedResult) => {
+                        console.log("Scanned QR Code:", decodedText);
+                        stopCameraScanner();
+                        submitCheckIn(decodedText.trim());
+                    },
+                    (errorMessage) => {}
+                );
+            } catch (err) {
+                console.error("Camera access error:", err);
+                alert("Camera Access Notice: " + (err.message || err) + "\n\nYou can click on the sample test QR codes or use the custom ID field.");
+                stopCameraScanner();
+            }
+        }
+
+        async function stopCameraScanner() {
+            const qrReaderDiv = document.getElementById('qr-reader');
+            const btnStart = document.getElementById('btn-start-scanner');
+            const btnStop = document.getElementById('btn-stop-scanner');
+
+            if (html5QrCode && html5QrCode.isScanning) {
+                try {
+                    await html5QrCode.stop();
+                } catch (e) {}
+            }
+
+            qrReaderDiv.style.display = 'none';
+            btnStart.style.display = 'inline-block';
+            btnStop.style.display = 'none';
+        }
+
+        async function scanImageFile(inputEl) {
+            if (!inputEl.files || inputEl.files.length === 0) return;
+            const file = inputEl.files[0];
+            const html5QrCodeFile = new Html5Qrcode("qr-reader");
+            try {
+                const decodedText = await html5QrCodeFile.scanFile(file, true);
+                console.log("File Scanned QR Code:", decodedText);
+                submitCheckIn(decodedText.trim());
+            } catch (err) {
+                alert("Could not detect a valid QR Code in the selected image file.");
+            }
+            inputEl.value = '';
+        }
 
         function checkIn(attendeeId) {
             const inputEl = document.getElementById('attendeeInput');
