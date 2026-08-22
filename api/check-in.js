@@ -60,7 +60,7 @@ module.exports = async function handler(req, res) {
     printedAt: null
   };
 
-  const { isNew, record } = store.setIfNotExists(attendee.id, newRecord);
+  const { isNew, record } = await store.setIfNotExists(attendee.id, newRecord);
 
   if (!isNew) {
     return sendJsonResponse(200, {
@@ -75,7 +75,6 @@ module.exports = async function handler(req, res) {
   const protocol = req.headers && req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'https';
   const webhookUrl = protocol + "://" + host + "/api/webhooks/print-complete";
 
-  // Initiate async webhook dispatch
   fetch(webhookUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

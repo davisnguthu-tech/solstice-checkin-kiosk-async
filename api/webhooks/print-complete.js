@@ -38,7 +38,7 @@ module.exports = async function handler(req, res) {
   }
 
   const printedAt = new Date().toISOString();
-  const updatedRecord = store.updateRecordStatus(checkInId, "CHECKED_IN", printedAt);
+  const updatedRecord = await store.updateRecordStatus(checkInId, "CHECKED_IN", printedAt);
 
   if (!updatedRecord) {
     return sendJsonResponse(404, {
