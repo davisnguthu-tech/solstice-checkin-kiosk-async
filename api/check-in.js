@@ -1,95 +1,47 @@
-/**
- * Vercel Serverless Function: Async Check-In Request Endpoint
- * Route: POST /api/check-in
- */
-
 const store = require('../lib/store');
-
-module.exports = async function handler(req, res) {
-  const sendJsonResponse = (statusCode, payload) => {
-    if (typeof res.status === 'function' && typeof res.json === 'function') {
-      res.status(statusCode).json(payload);
-    } else {
-      res.writeHead(statusCode, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(payload));
-    }
-  };
-
-  if (req.method && req.method.toUpperCase() !== 'POST') {
-    return sendJsonResponse(405, {
-      error: "Method Not Allowed",
-      message: "Use POST /api/check-in with JSON body { attendeeId: 'ATT-001' }"
-    });
-  }
-
-  let body = req.body;
-  if (typeof body === 'string') {
-    try { body = JSON.parse(body); } catch { body = {}; }
-  }
-  if (!body) body = {};
-
-  const { attendeeId } = body;
-
-  if (!attendeeId || typeof attendeeId !== 'string' || attendeeId.trim() === '') {
-    return sendJsonResponse(400, {
-      error: "Bad Request",
-      message: "Missing required field: 'attendeeId'",
-      validTestAttendees: ["ATT-001", "ATT-002", "ATT-003", "ATT-101", "ATT-102", "ATT-103"]
-    });
-  }
-
+module.exports = async (req, res) => {
+  if (req.method !== 'POST') return res.status(405).json({error:'Method not allowed'});
+  const { attendeeId, eventId } = req.body || {};
+  if (!attendeeId) return res.status(400).json({error:'attendeeId required'});
+  
   const attendee = store.getAttendee(attendeeId);
-  if (!attendee) {
-    return sendJsonResponse(404, {
-      error: "Not Found",
-      message: "Attendee with ID '" + attendeeId + "' is not registered."
-    });
-  }
-
-  const timestamp = new Date().toISOString();
-  const checkInId = "CHK-" + Date.now();
-
-  const newRecord = {
-    id: checkInId,
+  const record = {
+    id: `CHK-${Date.now()}`,
     attendeeId: attendee.id,
     name: attendee.name,
     role: attendee.role,
     company: attendee.company,
-    status: "PENDING_PRINT",
-    requestedAt: timestamp,
+    eventId: eventId || 'SOLSTICE-2025',
+    status: 'PENDING_PRINT',
+    requestedAt: new Date().toISOString(),
     printedAt: null
   };
-
-  const { isNew, record } = store.setIfNotExists(attendee.id, newRecord);
-
-  if (!isNew) {
-    return sendJsonResponse(200, {
-      status: "DUPLICATE_PREVENTED",
-      message: "Attendee " + attendee.name + " (" + attendee.id + ") has already checked in. No duplicate badge printed.",
-      checkInRecord: record
-    });
+  
+  const result = store.setIfNotExists(attendee.id, record);
+  if (!result.isNew) {
+    return res.status(200).json({status:'DUPLICATE_PREVENTED', message:`${attendee.name} already checked in`, checkInRecord: result.record});
   }
-
-  // Simulated Async Webhook Call & State Update
-  setTimeout(async () => {
-    try {
-      const host = process.env.VERCEL_URL || (req.headers && req.headers.host) || 'localhost:3001';
-      const protocol = host.includes('localhost') ? 'http' : 'https';
-      await fetch(protocol + "://" + host + "/api/webhooks/print-complete", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ checkInId: record.id })
-      });
-    } catch (err) {}
-    store.updateRecordStatus(record.id, 'CHECKED_IN', new Date().toISOString());
-  }, 2000);
-
-  return sendJsonResponse(202, {
-    status: "PENDING_PRINT",
+  
+  // CRITICAL: Fire async print but don't await
+  const host = req.headers.host;
+  const protocol = host.includes('localhost') ? 'http' : 'https';
+  setTimeout(() => {
+    fetch(`${protocol}://${host}/api/print-complete`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({checkInId: record.id})
+    }).catch(()=>{ 
+      // Fallback if fetch fails - directly update store
+      store.updateRecordStatus(record.id, 'CHECKED_IN', new Date().toISOString());
+    });
+  }, 1500);
+  
+  return res.status(202).json({
+    status:'PENDING_PRINT',
     checkInId: record.id,
     attendeeId: attendee.id,
     name: attendee.name,
-    message: "Check-in accepted. Badge print queued asynchronously.",
-    requestedAt: timestamp
+    message:'Check-in accepted. Badge print queued asynchronously.',
+    requestedAt: record.requestedAt
   });
 };
