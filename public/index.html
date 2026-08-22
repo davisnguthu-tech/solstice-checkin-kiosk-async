@@ -85,7 +85,7 @@
             transition: background 0.4s ease, color 0.4s ease;
         }
 
-        .container { max-width: 960px; margin: 0 auto; }
+        .container { max-width: 980px; margin: 0 auto; }
 
         /* Header & Top Bar */
         header { margin-bottom: 2.25rem; text-align: center; position: relative; }
@@ -437,22 +437,22 @@
                             <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-102</div>
                         </div>
 
-                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-103')">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-103" alt="QR ATT-103" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
-                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Aisha Omondi</div>
-                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-103</div>
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-106')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-106" alt="QR ATT-106" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Wambui (Organiser)</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-106</div>
                         </div>
 
-                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-104')">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-104" alt="QR ATT-104" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
-                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Olumide A.</div>
-                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-104</div>
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-107')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-107" alt="QR ATT-107" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Chef Mutua</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-107</div>
                         </div>
 
-                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-105')">
-                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-105" alt="QR ATT-105" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
-                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Sarah Jenkins</div>
-                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-105</div>
+                        <div style="text-align: center; background: rgba(0,0,0,0.3); padding: 0.75rem; border-radius: 10px; border: 1px solid var(--border-color); min-width: 135px; cursor: pointer;" onclick="submitCheckIn('ATT-110')">
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=110x110&data=ATT-110" alt="QR ATT-110" style="border-radius: 6px; background: #fff; padding: 4px; width: 100px; height: 100px;">
+                            <div style="font-size: 0.75rem; font-weight: 700; color: var(--text-main); margin-top: 0.35rem;">Faith (Usher)</div>
+                            <div style="font-size: 0.7rem; color: var(--primary-accent);">ATT-110</div>
                         </div>
                     </div>
                 </div>
@@ -460,8 +460,8 @@
 
             <!-- Kiosk Attendee Check-In Panel -->
             <section class="card">
-                <div class="card-title">🏷️ Kiosk Delegate Check-In Panel</div>
-                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.1rem;">Select a delegate below or enter a custom attendee ID to simulate scanning a barcode at the kiosk:</p>
+                <div class="card-title">🏷️ Kiosk Delegate & Event Crew Check-In Panel</div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.1rem;">Select a delegate or event team member below to simulate scanning a barcode at the kiosk:</p>
 
                 <div class="input-bar">
                     <input type="text" id="attendeeInput" class="input-field" placeholder="Enter custom ATT-xxx" onkeydown="if(event.key==='Enter') checkIn();">
@@ -472,8 +472,8 @@
                     <div class="attendee-card">
                         <div>
                             <div class="attendee-name">Hon. Margaret Ndung'u</div>
-                            <div class="attendee-role">🏛️ Cabinet Secretary</div>
-                            <div class="attendee-company">Ministry of ICT & Digital Economy (Kenya) • ATT-101</div>
+                            <div class="attendee-role">🏛️ Cabinet Secretary (VIP)</div>
+                            <div class="attendee-company">Ministry of ICT & Digital Economy • ATT-101</div>
                         </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-101')">Scan & Check-In</button>
                     </div>
@@ -481,8 +481,8 @@
                     <div class="attendee-card">
                         <div>
                             <div class="attendee-name">Dr. Kiprono Rotich</div>
-                            <div class="attendee-role">🛡️ Head of Cybersecurity Division</div>
-                            <div class="attendee-company">Google Kenya • ATT-102</div>
+                            <div class="attendee-role">🎤 Keynote Speaker</div>
+                            <div class="attendee-company">Google Kenya • Cybersecurity • ATT-102</div>
                         </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-102')">Scan & Check-In</button>
                     </div>
@@ -490,7 +490,7 @@
                     <div class="attendee-card">
                         <div>
                             <div class="attendee-name">Aisha Omondi</div>
-                            <div class="attendee-role">💳 VP of Mobile Financial Services</div>
+                            <div class="attendee-role">🎟️ Tech Attendee</div>
                             <div class="attendee-company">Safaricom M-PESA • ATT-103</div>
                         </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-103')">Scan & Check-In</button>
@@ -499,7 +499,7 @@
                     <div class="attendee-card">
                         <div>
                             <div class="attendee-name">Olumide Adebayo</div>
-                            <div class="attendee-role">⚡ Co-Founder & CTO</div>
+                            <div class="attendee-role">🎤 Panel Speaker</div>
                             <div class="attendee-company">Flutterwave (Nigeria) • ATT-104</div>
                         </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-104')">Scan & Check-In</button>
@@ -507,20 +507,47 @@
 
                     <div class="attendee-card">
                         <div>
-                            <div class="attendee-name">Sarah Jenkins</div>
-                            <div class="attendee-role">☁️ Director of Cloud Engineering</div>
-                            <div class="attendee-company">Microsoft Africa Dev Centre • ATT-105</div>
+                            <div class="attendee-name">Wambui Mwangi</div>
+                            <div class="attendee-role">🎪 Event Organiser</div>
+                            <div class="attendee-company">Africa Tech Summit Ops • ATT-106</div>
                         </div>
-                        <button class="btn-checkin" onclick="submitCheckIn('ATT-105')">Scan & Check-In</button>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-106')">Scan & Check-In</button>
                     </div>
 
                     <div class="attendee-card">
                         <div>
-                            <div class="attendee-name">Tariq Mansoor</div>
-                            <div class="attendee-role">🤖 Chief AI Strategist</div>
-                            <div class="attendee-company">Dubai Future Foundation (UAE) • ATT-106</div>
+                            <div class="attendee-name">Chef Dennis Mutua</div>
+                            <div class="attendee-role">🍲 Lead Caterer</div>
+                            <div class="attendee-company">GTC Hospitality & Catering • ATT-107</div>
                         </div>
-                        <button class="btn-checkin" onclick="submitCheckIn('ATT-106')">Scan & Check-In</button>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-107')">Scan & Check-In</button>
+                    </div>
+
+                    <div class="attendee-card">
+                        <div>
+                            <div class="attendee-name">Capt. Joseph Oduor</div>
+                            <div class="attendee-role">🛡️ Security Team Lead</div>
+                            <div class="attendee-company">GTC Security Operations • ATT-108</div>
+                        </div>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-108')">Scan & Check-In</button>
+                    </div>
+
+                    <div class="attendee-card">
+                        <div>
+                            <div class="attendee-name">Kevin Kilonzo</div>
+                            <div class="attendee-role">🔊 Sound & AV Team Lead</div>
+                            <div class="attendee-company">Nairobi Live Audio • ATT-109</div>
+                        </div>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-109')">Scan & Check-In</button>
+                    </div>
+
+                    <div class="attendee-card">
+                        <div>
+                            <div class="attendee-name">Faith Chebet</div>
+                            <div class="attendee-role">📋 VIP Protocol Usher</div>
+                            <div class="attendee-company">Summit Ushering Services • ATT-110</div>
+                        </div>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-110')">Scan & Check-In</button>
                     </div>
                 </div>
             </section>
@@ -555,7 +582,7 @@
                         <thead>
                             <tr>
                                 <th>Check-In ID</th>
-                                <th>Attendee / Position</th>
+                                <th>Attendee / Role</th>
                                 <th>Status</th>
                                 <th>Requested At</th>
                                 <th>Printed At</th>
