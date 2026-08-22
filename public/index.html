@@ -1,74 +1,185 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="vibrant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solstice Event Kiosk — Asynchronous Check-In Prototype</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-main: #0b0f19;
-            --card-bg: #151c2c;
+        /* CSS Theme Definitions */
+        :root[data-theme="vibrant"] {
+            --bg-main: #121824;
+            --card-bg: rgba(26, 32, 48, 0.75);
+            --card-border: rgba(255, 107, 53, 0.25);
             --border-color: #2a364f;
-            --text-main: #f8fafc;
+            --text-main: #f7f9f9;
             --text-muted: #94a3b8;
-            --accent-purple: #a855f7;
-            --accent-cyan: #38bdf8;
-            --accent-green: #4ade80;
-            --accent-yellow: #fbbf24;
-            --accent-red: #f87171;
+            --primary-accent: #ff6b35;
+            --primary-accent-hover: #e05523;
+            --secondary-accent: #004e64;
+            --secondary-accent-light: #00b4d8;
+            --accent-green: #2ecc71;
+            --accent-yellow: #f39c12;
+            --accent-red: #e74c3c;
+            --badge-bg: linear-gradient(135deg, #ff6b35, #d9480f);
+            --header-gradient: linear-gradient(135deg, #ff6b35, #00b4d8);
+            --glow-color: rgba(255, 107, 53, 0.15);
+        }
+
+        :root[data-theme="corporate"] {
+            --bg-main: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.75);
+            --card-border: rgba(59, 130, 246, 0.3);
+            --border-color: #334155;
+            --text-main: #ffffff;
+            --text-muted: #94a3b8;
+            --primary-accent: #3b82f6;
+            --primary-accent-hover: #2563eb;
+            --secondary-accent: #ffc107;
+            --secondary-accent-light: #ffd54f;
+            --accent-green: #10b981;
+            --accent-yellow: #f59e0b;
+            --accent-red: #ef4444;
+            --badge-bg: linear-gradient(135deg, #2563eb, #1d4ed8);
+            --header-gradient: linear-gradient(135deg, #60a5fa, #ffc107);
+            --glow-color: rgba(59, 130, 246, 0.15);
+        }
+
+        :root[data-theme="cultural"] {
+            --bg-main: #14110f;
+            --card-bg: rgba(35, 29, 25, 0.85);
+            --card-border: rgba(212, 175, 55, 0.3);
+            --border-color: #3d3229;
+            --text-main: #fbf9f5;
+            --text-muted: #a89f91;
+            --primary-accent: #d4af37;
+            --primary-accent-hover: #b89628;
+            --secondary-accent: #e05638;
+            --secondary-accent-light: #ff7b54;
+            --accent-green: #40a070;
+            --accent-yellow: #d4af37;
+            --accent-red: #c0392b;
+            --badge-bg: linear-gradient(135deg, #d4af37, #997a15);
+            --header-gradient: linear-gradient(135deg, #d4af37, #e05638);
+            --glow-color: rgba(212, 175, 55, 0.15);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, sans-serif;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             background: var(--bg-main);
             color: var(--text-main);
             line-height: 1.6;
-            padding: 2rem 1rem;
+            padding: 2.5rem 1.25rem;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 15% 15%, var(--glow-color) 0%, transparent 45%),
+                radial-gradient(circle at 85% 85%, var(--glow-color) 0%, transparent 45%);
+            background-attachment: fixed;
+            transition: background 0.4s ease, color 0.4s ease;
         }
 
-        .container { max-width: 900px; margin: 0 auto; }
+        .container { max-width: 920px; margin: 0 auto; }
 
-        header { margin-bottom: 2rem; text-align: center; }
+        /* Header & Top Bar */
+        header { margin-bottom: 2.25rem; text-align: center; position: relative; }
+
+        .theme-bar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            background: rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            padding: 0.4rem 0.6rem;
+            border-radius: 999px;
+            width: fit-content;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .theme-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 0.8rem;
+            font-weight: 600;
+            padding: 0.35rem 0.85rem;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.35rem;
+        }
+
+        .theme-btn.active {
+            background: var(--primary-accent);
+            color: #ffffff;
+            box-shadow: 0 4px 12px var(--glow-color);
+        }
 
         h1 {
-            color: var(--accent-purple);
-            font-size: 2.2rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 2.5rem;
             font-weight: 800;
+            letter-spacing: -0.02em;
+            background: var(--header-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
         .badge {
-            background: #7e22ce;
+            background: var(--badge-bg);
+            -webkit-text-fill-color: #ffffff;
             color: #ffffff;
-            font-size: 0.75rem;
-            padding: 0.25rem 0.6rem;
+            font-size: 0.72rem;
+            padding: 0.3rem 0.75rem;
             border-radius: 999px;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            font-weight: 700;
+            letter-spacing: 0.08em;
+            font-weight: 800;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.3);
+            display: inline-block;
+            vertical-align: middle;
         }
 
-        .subtitle { color: var(--text-muted); font-size: 1rem; margin-top: 0.5rem; }
+        .subtitle { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
 
+        /* Glassmorphic Cards */
         .card {
             background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 1.75rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 1.85rem;
+            margin-bottom: 1.75rem;
+            box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.45);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .card:hover {
+            box-shadow: 0 16px 40px -6px var(--glow-color);
         }
 
         .card-title {
-            font-size: 1.2rem;
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
             font-weight: 700;
             color: var(--text-main);
-            margin-bottom: 1rem;
+            margin-bottom: 1.1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -78,92 +189,174 @@
         .arch-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.75rem;
-            margin-top: 1rem;
+            gap: 0.85rem;
+            margin-top: 1.2rem;
         }
 
         .arch-box {
-            background: #0b0f19;
+            background: rgba(0, 0, 0, 0.3);
             border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 0.85rem;
+            border-radius: 12px;
+            padding: 1rem;
+            transition: transform 0.2s ease, border-color 0.2s ease;
         }
 
-        .arch-num { font-size: 0.75rem; font-weight: 700; color: var(--accent-purple); text-transform: uppercase; }
-        .arch-title { font-weight: 600; margin: 0.2rem 0; font-size: 0.95rem; }
-        .arch-desc { font-size: 0.8rem; color: var(--text-muted); }
+        .arch-box:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary-accent);
+        }
+
+        .arch-num { font-size: 0.72rem; font-weight: 800; color: var(--primary-accent); text-transform: uppercase; letter-spacing: 0.05em; }
+        .arch-title { font-weight: 700; margin: 0.25rem 0; font-size: 0.98rem; }
+        .arch-desc { font-size: 0.82rem; color: var(--text-muted); line-height: 1.45; }
+
+        /* Custom Input Bar */
+        .input-bar {
+            display: flex;
+            gap: 0.65rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .input-field {
+            flex: 1;
+            padding: 0.75rem 1.1rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--border-color);
+            background: rgba(0, 0, 0, 0.35);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.25s ease;
+        }
+
+        .input-field:focus {
+            border-color: var(--primary-accent);
+            box-shadow: 0 0 0 3px var(--glow-color);
+        }
 
         /* Attendee Grid */
         .attendee-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
+            gap: 1.1rem;
+            margin-top: 1.1rem;
         }
 
         .attendee-card {
-            background: #0b0f19;
+            background: rgba(0, 0, 0, 0.35);
             border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 1.25rem;
-            transition: all 0.2s ease;
+            border-radius: 14px;
+            padding: 1.35rem;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
         }
 
-        .attendee-card:hover { border-color: var(--accent-purple); transform: translateY(-2px); }
+        .attendee-card:hover {
+            border-color: var(--primary-accent);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px -4px var(--glow-color);
+        }
 
-        .attendee-name { font-size: 1.1rem; font-weight: 700; color: var(--text-main); }
-        .attendee-role { font-size: 0.85rem; color: var(--accent-cyan); font-weight: 600; }
-        .attendee-company { font-size: 0.8rem; color: var(--text-muted); margin-bottom: 1rem; }
+        .attendee-name { font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
+        .attendee-role { font-size: 0.85rem; color: var(--secondary-accent-light); font-weight: 600; margin: 0.2rem 0; }
+        .attendee-company { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.1rem; }
 
         .btn-checkin {
             width: 100%;
-            background: #7e22ce;
+            background: var(--primary-accent);
             color: #ffffff;
             border: none;
-            border-radius: 8px;
-            padding: 0.65rem;
-            font-size: 0.9rem;
-            font-weight: 600;
+            border-radius: 10px;
+            padding: 0.72rem 1.25rem;
+            font-size: 0.92rem;
+            font-weight: 700;
+            font-family: inherit;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 12px var(--glow-color);
         }
 
-        .btn-checkin:hover { background: #6b21a8; }
-        .btn-checkin:disabled { background: #334155; cursor: not-allowed; opacity: 0.6; }
+        .btn-checkin:hover {
+            background: var(--primary-accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px var(--glow-color);
+        }
+
+        .btn-checkin:active { transform: translateY(0); }
+        .btn-checkin:disabled { background: #475569; cursor: not-allowed; opacity: 0.6; box-shadow: none; }
 
         /* Status Display Banner */
         .status-display {
-            padding: 1.25rem;
-            border-radius: 10px;
-            background: #0b0f19;
+            padding: 1.4rem;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.4);
             border: 1px solid var(--border-color);
-            margin-top: 1rem;
+            margin-top: 0.5rem;
+            position: relative;
+            overflow: hidden;
         }
 
-        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+        .status-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.65rem; }
         
         .pill {
-            font-weight: 700; font-size: 0.85rem; padding: 0.3rem 0.75rem; border-radius: 6px; display: inline-flex; align-items: center; gap: 0.4rem;
+            font-weight: 700; font-size: 0.85rem; padding: 0.35rem 0.85rem; border-radius: 8px; display: inline-flex; align-items: center; gap: 0.45rem; letter-spacing: 0.02em;
         }
-        .pill-pending { background: #713f12; color: var(--accent-yellow); border: 1px solid #ca8a04; }
-        .pill-checked { background: #14532d; color: var(--accent-green); border: 1px solid #16a34a; }
-        .pill-duplicate { background: #581c87; color: var(--accent-purple); border: 1px solid #a855f7; }
+        .pill-pending { background: rgba(243, 156, 18, 0.15); color: var(--accent-yellow); border: 1px solid rgba(243, 156, 18, 0.4); }
+        .pill-checked { background: rgba(46, 204, 113, 0.15); color: var(--accent-green); border: 1px solid rgba(46, 204, 113, 0.4); }
+        .pill-duplicate { background: rgba(231, 76, 60, 0.15); color: var(--accent-red); border: 1px solid rgba(231, 76, 60, 0.4); }
 
         .spinner {
-            width: 14px; height: 14px; border: 2px solid var(--accent-yellow); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block;
+            width: 14px; height: 14px; border: 2.5px solid var(--accent-yellow); border-top-color: transparent; border-radius: 50%; animation: spin 0.8s linear infinite; display: inline-block;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
+        .progress-bar-container {
+            height: 4px;
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+            margin-top: 0.85rem;
+            overflow: hidden;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: var(--primary-accent);
+            transition: width 1.5s linear;
+        }
+
         /* Audit Log */
-        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.85rem; }
-        th, td { padding: 0.65rem 0.75rem; text-align: left; border-bottom: 1px solid var(--border-color); }
-        th { color: var(--text-muted); font-weight: 600; text-transform: uppercase; font-size: 0.75rem; }
+        table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.88rem; }
+        th, td { padding: 0.75rem 0.85rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        th { color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.72rem; letter-spacing: 0.05em; }
+        tbody tr { transition: background 0.15s ease; }
+        tbody tr:hover { background: rgba(255, 255, 255, 0.03); }
+
+        /* Responsive Adjustments */
+        @media (max-width: 640px) {
+            body { padding: 1.5rem 0.75rem; }
+            h1 { font-size: 1.85rem; flex-direction: column; gap: 0.35rem; }
+            .input-bar { flex-direction: column; }
+            .btn-checkin { width: 100%; }
+            .card { padding: 1.25rem; }
+        }
     </style>
 </head>
 <body>
     <div class="container">
+        <!-- Header & Theme Switcher Bar -->
         <header>
+            <div class="theme-bar" role="group" aria-label="Theme Selector">
+                <button class="theme-btn active" id="btn-vibrant" onclick="setTheme('vibrant')">🔥 Vibrant</button>
+                <button class="theme-btn" id="btn-corporate" onclick="setTheme('corporate')">💼 Corporate</button>
+                <button class="theme-btn" id="btn-cultural" onclick="setTheme('cultural')">🌍 Cultural</button>
+            </div>
+
             <h1>Solstice Check-In Kiosk <span class="badge">Async Queue</span></h1>
             <p class="subtitle">Event-Driven Serverless Badge Printing Prototype</p>
         </header>
@@ -172,7 +365,7 @@
             <!-- Architecture Flow Section -->
             <section class="card">
                 <div class="card-title">💡 Synchronous ➔ Asynchronous Architecture Pivot</div>
-                <p style="font-size: 0.9rem; color: var(--text-muted);">
+                <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.55;">
                     Decouples user check-in requests from slow physical badge printing hardware. Returns <code>HTTP 202 Accepted</code> instantly while an asynchronous queue updates status via webhooks.
                 </p>
 
@@ -203,32 +396,38 @@
             <!-- Kiosk Attendee Check-In Panel -->
             <section class="card">
                 <div class="card-title">🏷️ Kiosk Attendee Check-In Panel</div>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Select an attendee below or enter a custom ID to simulate scanning a barcode at the kiosk:</p>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.1rem;">Select an attendee below or enter a custom ID to simulate scanning a barcode at the kiosk:</p>
 
-                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
-                    <input type="text" id="attendeeInput" placeholder="Enter ATT-xxx" style="flex: 1; padding: 0.65rem; border-radius: 8px; border: 1px solid var(--border-color); background: #0b0f19; color: var(--text-main); font-size: 0.9rem;">
-                    <button class="btn-checkin" style="width: auto; padding: 0.65rem 1.25rem; white-space: nowrap;" onclick="checkIn(document.getElementById('attendeeInput').value)">Check-In Custom ID</button>
+                <div class="input-bar">
+                    <input type="text" id="attendeeInput" class="input-field" placeholder="Enter custom ATT-xxx" onkeydown="if(event.key==='Enter') checkIn();">
+                    <button class="btn-checkin" style="width: auto; white-space: nowrap;" onclick="checkIn()">Check-In Custom ID</button>
                 </div>
 
                 <div class="attendee-grid">
                     <div class="attendee-card">
-                        <div class="attendee-name">Alex Morgan</div>
-                        <div class="attendee-role">⭐ VIP Guest</div>
-                        <div class="attendee-company">Aether Dynamics • ATT-101</div>
+                        <div>
+                            <div class="attendee-name">Alex Morgan</div>
+                            <div class="attendee-role">⭐ VIP Guest</div>
+                            <div class="attendee-company">Aether Dynamics • ATT-101</div>
+                        </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-101')">Scan & Check-In</button>
                     </div>
 
                     <div class="attendee-card">
-                        <div class="attendee-name">Sam Taylor</div>
-                        <div class="attendee-role">🎤 Keynote Speaker</div>
-                        <div class="attendee-company">Solaris Labs • ATT-102</div>
+                        <div>
+                            <div class="attendee-name">Sam Taylor</div>
+                            <div class="attendee-role">🎤 Keynote Speaker</div>
+                            <div class="attendee-company">Solaris Labs • ATT-102</div>
+                        </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-102')">Scan & Check-In</button>
                     </div>
 
                     <div class="attendee-card">
-                        <div class="attendee-name">Jordan Lee</div>
-                        <div class="attendee-role">🎟️ Attendee</div>
-                        <div class="attendee-company">Vortex Systems • ATT-103</div>
+                        <div>
+                            <div class="attendee-name">Jordan Lee</div>
+                            <div class="attendee-role">🎟️ Attendee</div>
+                            <div class="attendee-company">Vortex Systems • ATT-103</div>
+                        </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-103')">Scan & Check-In</button>
                     </div>
                 </div>
@@ -240,11 +439,15 @@
 
                 <div class="status-display">
                     <div class="status-header">
-                        <strong id="statusAttendeeName" style="font-size: 1.1rem;">-</strong>
+                        <strong id="statusAttendeeName" style="font-size: 1.15rem;">-</strong>
                         <span id="statusBadge" class="pill">PENDING</span>
                     </div>
-                    <div id="statusMessage" style="font-size: 0.9rem; color: var(--text-muted);">Processing...</div>
-                    <div id="statusMeta" style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.5rem;"></div>
+                    <div id="statusMessage" style="font-size: 0.92rem; color: var(--text-muted);">Processing...</div>
+                    <div id="statusMeta" style="font-size: 0.78rem; color: var(--text-muted); margin-top: 0.5rem;"></div>
+
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressBar"></div>
+                    </div>
                 </div>
             </section>
 
@@ -252,23 +455,25 @@
             <section class="card">
                 <div class="card-title">
                     <span>📋 Live Event Audit Log</span>
-                    <button onclick="refreshAuditLog()" style="background:none; border:none; color:var(--accent-cyan); font-size:0.85rem; cursor:pointer;">🔄 Refresh Log</button>
+                    <button onclick="refreshAuditLog()" style="background:none; border:none; color:var(--primary-accent); font-size:0.88rem; font-weight:700; cursor:pointer;">🔄 Refresh Log</button>
                 </div>
 
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Check-In ID</th>
-                            <th>Attendee</th>
-                            <th>Status</th>
-                            <th>Requested At</th>
-                            <th>Printed At</th>
-                        </tr>
-                    </thead>
-                    <tbody id="auditLogBody">
-                        <tr><td colspan="5" style="color:var(--text-muted); text-align:center;">No check-in events recorded yet.</td></tr>
-                    </tbody>
-                </table>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Check-In ID</th>
+                                <th>Attendee</th>
+                                <th>Status</th>
+                                <th>Requested At</th>
+                                <th>Printed At</th>
+                            </tr>
+                        </thead>
+                        <tbody id="auditLogBody">
+                            <tr><td colspan="5" style="color:var(--text-muted); text-align:center;">No check-in events recorded yet.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
             </section>
         </main>
     </div>
@@ -276,10 +481,23 @@
     <script>
         let pollTimer = null;
 
+        function setTheme(themeName) {
+            document.documentElement.setAttribute('data-theme', themeName);
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById('btn-' + themeName);
+            if (activeBtn) activeBtn.classList.add('active');
+            localStorage.setItem('solstice_theme', themeName);
+        }
+
+        const savedTheme = localStorage.getItem('solstice_theme');
+        if (savedTheme) setTheme(savedTheme);
+
         function checkIn(attendeeId) {
-            const id = (attendeeId !== undefined && attendeeId !== null && attendeeId !== '') ? attendeeId : document.getElementById('attendeeInput').value;
+            const inputEl = document.getElementById('attendeeInput');
+            const id = (attendeeId !== undefined && attendeeId !== null && attendeeId !== '') ? attendeeId : inputEl.value;
             if (id && id.trim()) {
                 submitCheckIn(id.trim());
+                inputEl.value = '';
             }
         }
 
@@ -289,11 +507,13 @@
             const statusBadge = document.getElementById('statusBadge');
             const statusMessage = document.getElementById('statusMessage');
             const statusMeta = document.getElementById('statusMeta');
+            const progressBar = document.getElementById('progressBar');
 
             statusCard.style.display = 'block';
             statusBadge.className = 'pill pill-pending';
             statusBadge.innerHTML = '<span class="spinner"></span> QUEUING...';
             statusMessage.textContent = 'Submitting check-in request to serverless queue...';
+            progressBar.style.width = '10%';
 
             if (pollTimer) clearInterval(pollTimer);
 
@@ -313,6 +533,7 @@
                     statusBadge.innerHTML = '⚠️ DUPLICATE PREVENTED';
                     statusMessage.innerHTML = '<strong>Duplicate Scan Blocked!</strong> ' + data.message;
                     statusMeta.textContent = "Original Check-In: " + record.requestedAt + " | Badge Printed: " + (record.printedAt || 'Pending');
+                    progressBar.style.width = '100%';
                     refreshAuditLog();
                     return;
                 }
@@ -323,6 +544,7 @@
                     statusBadge.innerHTML = '<span class="spinner"></span> PENDING_PRINT';
                     statusMessage.innerHTML = '⏳ <strong>Badge Print Queued!</strong> Kiosk is polling asynchronous status...';
                     statusMeta.textContent = "CheckIn ID: " + data.checkInId + " | Requested At: " + data.requestedAt;
+                    progressBar.style.width = '45%';
                     
                     refreshAuditLog();
                     startStatusPolling(data.checkInId);
@@ -339,6 +561,7 @@
         }
 
         function startStatusPolling(checkInId) {
+            const progressBar = document.getElementById('progressBar');
             pollTimer = setInterval(async () => {
                 try {
                     const res = await fetch('/api/status?id=' + checkInId);
@@ -355,6 +578,7 @@
                         statusBadge.innerHTML = '✅ CHECKED_IN';
                         statusMessage.innerHTML = '🎉 <strong>Badge Printed Successfully!</strong> Welcome ' + record.name + ' (' + record.company + ').';
                         statusMeta.textContent = "Requested: " + record.requestedAt + " | Printed At: " + record.printedAt;
+                        progressBar.style.width = '100%';
                         
                         refreshAuditLog();
                     }
