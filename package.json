@@ -1,0 +1,12 @@
+{
+  "name": "solstice-checkin-kiosk-async",
+  "version": "1.0.0",
+  "description": "Asynchronous Event-Driven Kiosk Check-In & Badge Printing Prototype on Vercel.",
+  "main": "api/check-in.js",
+  "type": "commonjs",
+  "scripts": {
+    "dev": "node dev.js",
+    "start": "node dev.js"
+  },
+  "license": "ISC"
+}
