@@ -25,7 +25,7 @@ module.exports = async function handler(req, res) {
 
   let record = null;
   if (id) {
-    record = store.getRecordById(id) || store.getRecordByAttendeeId(id);
+    record = await store.getRecord(id);
   }
 
   if (!record) {

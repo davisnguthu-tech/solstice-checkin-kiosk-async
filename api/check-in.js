@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   const attendee = store.getAttendee(attendeeId);
 
   // 1. Atomic Duplicate Scan Protection
-  const existing = store.getRecordByAttendeeId(attendee.id);
+  const existing = await store.getRecordByAttendeeId(attendee.id);
   if (existing && (existing.status === 'PENDING_PRINT' || existing.status === 'CHECKED_IN')) {
     return res.status(200).json({
       status: 'DUPLICATE_PREVENTED',
@@ -35,7 +35,7 @@ module.exports = async (req, res) => {
     printedAt: null
   };
 
-  const result = store.setIfNotExists(attendee.id, record);
+  const result = await store.setIfNotExists(attendee.id, record);
   if (!result.isNew) {
     return res.status(200).json({
       status: 'DUPLICATE_PREVENTED',

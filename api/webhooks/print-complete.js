@@ -13,7 +13,7 @@ module.exports = async (req, res) => {
   }
 
   const printedAt = new Date().toISOString();
-  const updated = store.updateRecordStatus(searchId, 'CHECKED_IN', printedAt);
+  const updated = await store.updateRecordStatus(searchId, 'CHECKED_IN', printedAt);
 
   if (!updated) {
     return res.status(404).json({ error: 'Check-in record not found', searchId });

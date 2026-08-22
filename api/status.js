@@ -34,11 +34,12 @@ module.exports = async function handler(req, res) {
 
   let record = null;
   if (searchId) {
-    record = store.getRecordById(searchId) || store.getRecordByAttendeeId(searchId);
+    record = await store.getRecord(searchId);
   } else {
+    const records = await store.getAllRecords();
     return sendJsonResponse(200, {
-      totalRecords: store.getAllRecords().length,
-      records: store.getAllRecords()
+      totalRecords: records.length,
+      records: records
     });
   }
 
