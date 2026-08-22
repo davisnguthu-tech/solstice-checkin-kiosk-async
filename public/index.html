@@ -203,7 +203,12 @@
             <!-- Kiosk Attendee Check-In Panel -->
             <section class="card">
                 <div class="card-title">🏷️ Kiosk Attendee Check-In Panel</div>
-                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Select an attendee below to simulate scanning a barcode at the kiosk:</p>
+                <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 1rem;">Select an attendee below or enter a custom ID to simulate scanning a barcode at the kiosk:</p>
+
+                <div style="display: flex; gap: 0.5rem; margin-bottom: 1.25rem;">
+                    <input type="text" id="attendeeInput" placeholder="Enter ATT-xxx" style="flex: 1; padding: 0.65rem; border-radius: 8px; border: 1px solid var(--border-color); background: #0b0f19; color: var(--text-main); font-size: 0.9rem;">
+                    <button class="btn-checkin" style="width: auto; padding: 0.65rem 1.25rem; white-space: nowrap;" onclick="checkIn(document.getElementById('attendeeInput').value)">Check-In Custom ID</button>
+                </div>
 
                 <div class="attendee-grid">
                     <div class="attendee-card">
@@ -270,6 +275,13 @@
 
     <script>
         let pollTimer = null;
+
+        function checkIn(attendeeId) {
+            const id = (attendeeId !== undefined && attendeeId !== null && attendeeId !== '') ? attendeeId : document.getElementById('attendeeInput').value;
+            if (id && id.trim()) {
+                submitCheckIn(id.trim());
+            }
+        }
 
         async function submitCheckIn(attendeeId) {
             const statusCard = document.getElementById('statusCard');
