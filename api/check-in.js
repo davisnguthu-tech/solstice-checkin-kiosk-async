@@ -44,27 +44,18 @@ module.exports = async (req, res) => {
     });
   }
 
-  // 3. Dispatch Async Background Print Job to Webhook Callback
+  // 3. Trigger Vendor Simulation Webhook Callback (1s simulated print delay)
   const host = req.headers['x-forwarded-host'] || req.headers.host || 'localhost:3001';
   const protocol = req.headers['x-forwarded-proto'] || (host.includes('localhost') ? 'http' : 'https');
   const webhookUrl = `${protocol}://${host}/api/webhooks/print-complete`;
 
-  // Asynchronously fire vendor simulation webhook callback
-  const dispatchWebhook = async () => {
-    try {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ checkInId: record.id, attendeeId: attendee.id })
-      });
-    } catch (err) {
-      // Fallback direct store update if HTTP fetch cannot be completed in serverless isolate
-      store.updateRecordStatus(record.id, 'CHECKED_IN', new Date().toISOString());
-    }
-  };
-
-  // Trigger dispatch immediately without awaiting response
-  dispatchWebhook();
+  setTimeout(() => {
+    fetch(webhookUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ checkInId: record.id, attendeeId: attendee.id })
+    }).catch(() => {});
+  }, 1000);
 
   // 4. Return 202 Accepted instantly
   return res.status(202).json({
