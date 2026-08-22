@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Solstice Event Kiosk — Asynchronous Check-In Prototype</title>
+    <title>Africa Tech Summit Nairobi — Kiosk Check-In & Badge Printing</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -83,7 +83,7 @@
             transition: background 0.4s ease, color 0.4s ease;
         }
 
-        .container { max-width: 920px; margin: 0 auto; }
+        .container { max-width: 960px; margin: 0 auto; }
 
         /* Header & Top Bar */
         header { margin-bottom: 2.25rem; text-align: center; position: relative; }
@@ -156,6 +156,7 @@
         }
 
         .subtitle { color: var(--text-muted); font-size: 1.05rem; font-weight: 500; }
+        .venue-tag { display: inline-flex; align-items: center; gap: 0.35rem; color: var(--secondary-accent-light); font-weight: 700; font-size: 0.92rem; margin-top: 0.35rem; }
 
         /* Glassmorphic Cards */
         .card {
@@ -238,7 +239,7 @@
         /* Attendee Grid */
         .attendee-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.1rem;
             margin-top: 1.1rem;
         }
@@ -262,8 +263,8 @@
         }
 
         .attendee-name { font-size: 1.15rem; font-weight: 700; color: var(--text-main); }
-        .attendee-role { font-size: 0.85rem; color: var(--secondary-accent-light); font-weight: 600; margin: 0.2rem 0; }
-        .attendee-company { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.1rem; }
+        .attendee-role { font-size: 0.85rem; color: var(--secondary-accent-light); font-weight: 600; margin: 0.25rem 0; }
+        .attendee-company { font-size: 0.82rem; color: var(--text-muted); margin-bottom: 1.1rem; line-height: 1.4; }
 
         .btn-checkin {
             width: 100%;
@@ -357,8 +358,9 @@
                 <button class="theme-btn" id="btn-cultural" onclick="setTheme('cultural')">🌍 Cultural</button>
             </div>
 
-            <h1>Solstice Check-In Kiosk <span class="badge">Async Queue</span></h1>
-            <p class="subtitle">Event-Driven Serverless Badge Printing Prototype</p>
+            <h1>Africa Tech Summit Nairobi <span class="badge">Kiosk Check-In</span></h1>
+            <p class="subtitle">Event-Driven Asynchronous Badge Printing Prototype</p>
+            <div class="venue-tag">📍 GTC Convention Centre, Westlands, Nairobi, Kenya</div>
         </header>
 
         <main>
@@ -366,37 +368,37 @@
             <section class="card">
                 <div class="card-title">💡 Synchronous ➔ Asynchronous Architecture Pivot</div>
                 <p style="font-size: 0.92rem; color: var(--text-muted); line-height: 1.55;">
-                    Decouples user check-in requests from slow physical badge printing hardware. Returns <code>HTTP 202 Accepted</code> instantly while an asynchronous queue updates status via webhooks.
+                    Decouples attendee check-in requests from slow physical badge printers. Returns <code>HTTP 202 Accepted</code> instantly while an asynchronous queue dispatches thermal badge print jobs and receives webhook completion callbacks.
                 </p>
 
                 <div class="arch-grid">
                     <div class="arch-box">
                         <div class="arch-num">Step 1</div>
-                        <div class="arch-title">Scan / Check-In</div>
-                        <div class="arch-desc">POST /api/check-in checks duplicate state and returns 202 Accepted.</div>
+                        <div class="arch-title">Kiosk Scan</div>
+                        <div class="arch-desc">POST /api/check-in validates duplicate scan lock & returns 202 Accepted.</div>
                     </div>
                     <div class="arch-box">
                         <div class="arch-num">Step 2</div>
-                        <div class="arch-title">Async Queue Job</div>
-                        <div class="arch-desc">Status set to PENDING_PRINT; print job dispatched asynchronously.</div>
+                        <div class="arch-title">Async Print Queue</div>
+                        <div class="arch-desc">Status set to PENDING_PRINT; print task queued in background.</div>
                     </div>
                     <div class="arch-box">
                         <div class="arch-num">Step 3</div>
                         <div class="arch-title">Status Polling</div>
-                        <div class="arch-desc">Kiosk polls GET /api/status?id=... every 1s without blocking threads.</div>
+                        <div class="arch-desc">Kiosk polls GET /api/status?id=... every 1s asynchronously.</div>
                     </div>
                     <div class="arch-box">
                         <div class="arch-num">Step 4</div>
-                        <div class="arch-title">Print Confirmation</div>
-                        <div class="arch-desc">Webhook POST /api/webhooks/print-complete updates status to CHECKED_IN.</div>
+                        <div class="arch-title">Print Complete</div>
+                        <div class="arch-desc">Webhook POST /api/webhooks/print-complete updates state to CHECKED_IN.</div>
                     </div>
                 </div>
             </section>
 
             <!-- Kiosk Attendee Check-In Panel -->
             <section class="card">
-                <div class="card-title">🏷️ Kiosk Attendee Check-In Panel</div>
-                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.1rem;">Select an attendee below or enter a custom ID to simulate scanning a barcode at the kiosk:</p>
+                <div class="card-title">🏷️ Kiosk Delegate Check-In Panel</div>
+                <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1.1rem;">Select a delegate below or enter a custom attendee ID to simulate scanning a barcode at the kiosk:</p>
 
                 <div class="input-bar">
                     <input type="text" id="attendeeInput" class="input-field" placeholder="Enter custom ATT-xxx" onkeydown="if(event.key==='Enter') checkIn();">
@@ -406,29 +408,56 @@
                 <div class="attendee-grid">
                     <div class="attendee-card">
                         <div>
-                            <div class="attendee-name">Alex Morgan</div>
-                            <div class="attendee-role">⭐ VIP Guest</div>
-                            <div class="attendee-company">Aether Dynamics • ATT-101</div>
+                            <div class="attendee-name">Hon. Margaret Ndung'u</div>
+                            <div class="attendee-role">🏛️ Cabinet Secretary</div>
+                            <div class="attendee-company">Ministry of ICT & Digital Economy (Kenya) • ATT-101</div>
                         </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-101')">Scan & Check-In</button>
                     </div>
 
                     <div class="attendee-card">
                         <div>
-                            <div class="attendee-name">Sam Taylor</div>
-                            <div class="attendee-role">🎤 Keynote Speaker</div>
-                            <div class="attendee-company">Solaris Labs • ATT-102</div>
+                            <div class="attendee-name">Dr. Kiprono Rotich</div>
+                            <div class="attendee-role">🛡️ Head of Cybersecurity Division</div>
+                            <div class="attendee-company">Google Kenya • ATT-102</div>
                         </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-102')">Scan & Check-In</button>
                     </div>
 
                     <div class="attendee-card">
                         <div>
-                            <div class="attendee-name">Jordan Lee</div>
-                            <div class="attendee-role">🎟️ Attendee</div>
-                            <div class="attendee-company">Vortex Systems • ATT-103</div>
+                            <div class="attendee-name">Aisha Omondi</div>
+                            <div class="attendee-role">💳 VP of Mobile Financial Services</div>
+                            <div class="attendee-company">Safaricom M-PESA • ATT-103</div>
                         </div>
                         <button class="btn-checkin" onclick="submitCheckIn('ATT-103')">Scan & Check-In</button>
+                    </div>
+
+                    <div class="attendee-card">
+                        <div>
+                            <div class="attendee-name">Olumide Adebayo</div>
+                            <div class="attendee-role">⚡ Co-Founder & CTO</div>
+                            <div class="attendee-company">Flutterwave (Nigeria) • ATT-104</div>
+                        </div>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-104')">Scan & Check-In</button>
+                    </div>
+
+                    <div class="attendee-card">
+                        <div>
+                            <div class="attendee-name">Sarah Jenkins</div>
+                            <div class="attendee-role">☁️ Director of Cloud Engineering</div>
+                            <div class="attendee-company">Microsoft Africa Dev Centre • ATT-105</div>
+                        </div>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-105')">Scan & Check-In</button>
+                    </div>
+
+                    <div class="attendee-card">
+                        <div>
+                            <div class="attendee-name">Tariq Mansoor</div>
+                            <div class="attendee-role">🤖 Chief AI Strategist</div>
+                            <div class="attendee-company">Dubai Future Foundation (UAE) • ATT-106</div>
+                        </div>
+                        <button class="btn-checkin" onclick="submitCheckIn('ATT-106')">Scan & Check-In</button>
                     </div>
                 </div>
             </section>
@@ -463,7 +492,7 @@
                         <thead>
                             <tr>
                                 <th>Check-In ID</th>
-                                <th>Attendee</th>
+                                <th>Attendee / Position</th>
                                 <th>Status</th>
                                 <th>Requested At</th>
                                 <th>Printed At</th>
@@ -604,7 +633,7 @@
                     .map(r => 
                     '<tr>' +
                         '<td><code>' + r.id + '</code></td>' +
-                        '<td><strong>' + (r.name || 'Attendee') + '</strong> <span style="color:var(--text-muted);">(' + (r.attendeeId || r.id) + ')</span></td>' +
+                        '<td><strong>' + (r.name || 'Delegate') + '</strong> <div style="font-size:0.75rem; color:var(--text-muted);">' + (r.role || 'Delegate') + ' • ' + (r.company || 'Africa Tech Summit') + '</div></td>' +
                         '<td><span class="pill ' + (r.status === 'CHECKED_IN' ? 'pill-checked' : 'pill-pending') + '">' + (r.status === 'CHECKED_IN' ? '✅ CHECKED_IN' : '⏳ PENDING_PRINT') + '</span></td>' +
                         '<td>' + (r.requestedAt ? new Date(r.requestedAt).toLocaleTimeString() : '-') + '</td>' +
                         '<td>' + (r.printedAt ? new Date(r.printedAt).toLocaleTimeString() : '<span style="color:var(--accent-yellow);">Queued</span>') + '</td>' +

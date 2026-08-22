@@ -29,7 +29,7 @@ module.exports = async (req, res) => {
     name: attendee.name,
     role: attendee.role,
     company: attendee.company,
-    eventId: eventId || 'SOLSTICE-2025',
+    eventId: eventId || 'ATS-NAIROBI-2026',
     status: 'PENDING_PRINT',
     requestedAt: new Date().toISOString(),
     printedAt: null
