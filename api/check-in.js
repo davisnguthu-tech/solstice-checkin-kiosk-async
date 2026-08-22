@@ -18,7 +18,7 @@ module.exports = async function handler(req, res) {
   if (req.method && req.method.toUpperCase() !== 'POST') {
     return sendJsonResponse(405, {
       error: "Method Not Allowed",
-      message: "Use POST /api/check-in with JSON body { attendeeId: 'ATT-101' }"
+      message: "Use POST /api/check-in with JSON body { attendeeId: 'ATT-001' }"
     });
   }
 
@@ -34,7 +34,7 @@ module.exports = async function handler(req, res) {
     return sendJsonResponse(400, {
       error: "Bad Request",
       message: "Missing required field: 'attendeeId'",
-      validTestAttendees: ["ATT-101", "ATT-102", "ATT-103"]
+      validTestAttendees: ["ATT-001", "ATT-002", "ATT-003", "ATT-101", "ATT-102", "ATT-103"]
     });
   }
 
@@ -42,8 +42,7 @@ module.exports = async function handler(req, res) {
   if (!attendee) {
     return sendJsonResponse(404, {
       error: "Not Found",
-      message: "Attendee with ID '" + attendeeId + "' is not registered.",
-      validTestAttendees: ["ATT-101", "ATT-102", "ATT-103"]
+      message: "Attendee with ID '" + attendeeId + "' is not registered."
     });
   }
 
@@ -71,23 +70,20 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // Simulate Async Queue Worker triggering print completion webhook after ~2.5 seconds
-  const host = req.headers && req.headers.host ? req.headers.host : 'localhost:3001';
-  const protocol = req.headers && req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'http';
+  // Trigger print completion webhook simulation
+  const host = req.headers && req.headers.host ? req.headers.host : 'solstice-events-co-checkin-kiosk-as.vercel.app';
+  const protocol = req.headers && req.headers['x-forwarded-proto'] ? req.headers['x-forwarded-proto'] : 'https';
   const webhookUrl = protocol + "://" + host + "/api/webhooks/print-complete";
 
-  setTimeout(async () => {
-    try {
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ checkInId: newRecord.id })
-      });
-    } catch (err) {
-      console.error("Async webhook simulation error:", err.message);
-      store.updateRecordStatus(newRecord.id, 'CHECKED_IN', new Date().toISOString());
-    }
-  }, 2500);
+  // Initiate async webhook dispatch
+  fetch(webhookUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ checkInId: newRecord.id })
+  }).catch(err => {
+    console.error("Async webhook simulation fetch error:", err.message);
+    store.updateRecordStatus(newRecord.id, 'CHECKED_IN', new Date().toISOString());
+  });
 
   return sendJsonResponse(202, {
     status: "PENDING_PRINT",
